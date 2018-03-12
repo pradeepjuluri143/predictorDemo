@@ -3,31 +3,32 @@ package predictorSearch;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
-import java.util.ArrayList;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MultivaluedMap;
+
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.filter.HTTPBasicAuthFilter;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
+
 	 
 public class Search extends HttpServlet {
+	
+	
+		private static final String API_URL="https://ussouthcentral.services.azureml.net/workspaces/243426397da54efe9c2fb07178c3275a/services/ae31ab226c4541e69b8aae8c87f7c713/execute?api-version=2.0&details=true";
+		private static final String API_KEY="gieDIjxOKiWBzrbPHUiUjDxB4HfU1w7ttTkQ/2O12uQ//6J3iUsnIHxI5lI6wFy1AVU81A7lg4tAX0cN08YBHg==";
 	 
 	    protected void doPost(HttpServletRequest request, HttpServletResponse response)
 	            throws ServletException, IOException {
 	        response.setContentType("text/html");
 	        PrintWriter out = response.getWriter();
-//	        Connection conn = null;
-//	        String url = "jdbc:mysql://localhost:3306/";
-//	        String dbName = "dbname";
-//	        String driver = "com.mysql.jdbc.Driver";
-//	        String userName = "root";
-//	        String password = "dbpass";
 	 
 	        Statement st;
 	        try {
-//	            Class.forName(driver).newInstance();
-//	            conn = DriverManager.getConnection(url + dbName, userName, password);
-//	            System.out.println("Connected!");
 	            String age = request.getParameter("age");
 	            String foodpref = request.getParameter("foodpref");
 	            String country = request.getParameter("country");
@@ -40,34 +41,33 @@ public class Search extends HttpServlet {
 	            String diabetic = request.getParameter("diabetic");
 	            String bp = request.getParameter("bp");
 	            String hd = request.getParameter("hd");
-	 
-	            ArrayList al = null;
-	            ArrayList pid_list = new ArrayList();
-	 
-//	            st = conn.createStatement();
-//	            ResultSet rs = st.executeQuery(query);
-//	 
-//	            while (rs.next()) {
-//	                al = new ArrayList();
-//	 
-////	                out.println(rs.getString(1));
-////	                out.println(rs.getString(2));
-////	                out.println(rs.getString(3));
-////	                out.println(rs.getString(4));
-//	                al.add(rs.getString(1));
-//	                al.add(rs.getString(2));
-//	                al.add(rs.getString(3));
-//	                al.add(rs.getString(4));
-//	 
-//	                System.out.println("al :: " + al);
-//	                pid_list.add(al);
-//	            }
-//	 
-//	            request.setAttribute("piList", pid_list);
-//	            RequestDispatcher view = request.getRequestDispatcher("/searchview.jsp");
-//	            view.forward(request, response);
-//	            conn.close();
-	            System.out.println("Disconnected!");
+	            
+	            Client client = Client.create();
+	            WebResource webResource = client
+	         		   .resource(API_URL);
+	            MultivaluedMap<String, String> queryParams = new MultivaluedMapImpl();
+	            queryParams.add("age", "44"); //set parametes for request
+	            queryParams.add("education", "Doctorate");
+	            queryParams.add("marital-status", "Married-civ-spouse");
+	            queryParams.add("relationship", "Own-Child");
+	            queryParams.add("race", "white");
+	            queryParams.add("sex", "female");
+	            String appKey = "Bearer " + API_KEY;
+
+	            ClientResponse webresponse = webResource.queryParams(queryParams).header("Content-Type", "application/json;charset=UTF-8")
+	            							.header("Authorization", appKey).get(ClientResponse.class);
+
+	            if (webresponse.getStatus() != 201) {
+	    			throw new RuntimeException("Failed : HTTP error code : "
+	    			     + webresponse.getStatus());
+	    		}
+
+	    		System.out.println("Output from Server .... \n");
+	    		String output = webresponse.getEntity(String.class);
+	    		System.out.println(output);
+
+	            
+	            
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	        }
