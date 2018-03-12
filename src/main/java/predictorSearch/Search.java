@@ -3,6 +3,8 @@ package predictorSearch;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
+
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -26,21 +28,21 @@ public class Search extends HttpServlet {
 	            throws ServletException, IOException {
 	        response.setContentType("text/html");
 	        PrintWriter out = response.getWriter();
-	 
-	        Statement st;
+	        String output;
 	        try {
 	            String age = request.getParameter("age");
-	            String foodpref = request.getParameter("foodpref");
+	            String gender = request.getParameter("gender");
+	            String maritalStatus = request.getParameter("maritalStatus");
 	            String country = request.getParameter("country");
-	            String married = request.getParameter("married");
-	            String height = request.getParameter("height");
-	            String weight = request.getParameter("weight");
-	            String allergies = request.getParameter("allergies");
 	            String smoking = request.getParameter("smoking");
 	            String drinking = request.getParameter("drinking");
 	            String diabetic = request.getParameter("diabetic");
-	            String bp = request.getParameter("bp");
-	            String hd = request.getParameter("hd");
+	            String bis = request.getParameter("bis");
+	            String biu = request.getParameter("biu");
+	            String ciu = request.getParameter("ciu");
+	            String lbc = request.getParameter("lbc");
+	            String dis = request.getParameter("dis");
+	            String  freqHeadAches=request.getParameter("freqHeadAches");
 	            
 	            Client client = Client.create();
 	            WebResource webResource = client
@@ -63,14 +65,17 @@ public class Search extends HttpServlet {
 	    		}
 
 	    		System.out.println("Output from Server .... \n");
-	    		String output = webresponse.getEntity(String.class);
+	    		 output = webresponse.getEntity(String.class);
 	    		System.out.println(output);
 
-	            
+	            request.getSession().setAttribute("ResponseResults", "85% chances for Cancer");
 	            
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	        }
+	        
+	        RequestDispatcher rd=request.getRequestDispatcher("searchResults.jsp");  
+	        rd.forward(request, response);
 	    }
 	 
 	    /** 
