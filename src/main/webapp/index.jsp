@@ -15,7 +15,7 @@
         </td>
         </tr>
         <tr>
-        <td>
+        <td nowrap="nowrap">
         <ul id="stats">
     <li><a href="#"><span class="listHeader">Predict Your Cancer</span></a></li>
     <li><a href="#"><span class="listHeader">Predict Claim Amount based on Diagnosis Code</span></a></li>
