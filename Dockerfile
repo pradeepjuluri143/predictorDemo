@@ -1,3 +1,6 @@
-FROM tomcat:8.5-jre8
-RUN rm -fr /usr/local/tomcat/webapps/ROOT
-COPY target/PredictorClientDemo-0.0.1-SNAPSHOT.war /usr/local/tomcat/webapps/ROOT.war
+FROM maven:3.5.2-jdk-8 AS build-env
+RUN mvn package
+ 
+FROM tomcat:8
+RUN rm -rf /usr/local/tomcat/webapps/ROOT
+COPY --from=build-env /app/target/*.war /usr/local/tomcat/webapps/ROOT.war
